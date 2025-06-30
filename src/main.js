@@ -1,13 +1,18 @@
 // index.js
 const Fastify = require('fastify');
 const mongoose = require('mongoose');
-const errorHandler = require('./errors/error-handler');
+const errorHandler = require('./middlewares/errors/error-handler');
 const swagger = require('@fastify/swagger');
 const swaggerUI = require('@fastify/swagger-ui');
+const AutoLoad = require('@fastify/autoload');
+const path = require('path');
 
 require('dotenv').config();
 
-const fastify = Fastify({ logger: true });
+const fastify = Fastify({
+  logger: true,
+});
+
 fastify.setErrorHandler(errorHandler);
 
 const port = process.env.PORT || 3000;
@@ -19,6 +24,10 @@ async function start() {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
+
+    await fastify.register(require('./services/firebase'));
+    await fastify.register(require('./middlewares/headers/headers'));
+
     fastify.log.info('✅ Conectado a MongoDB');
 
     // Registro de swagger
@@ -34,6 +43,15 @@ async function start() {
         consumes: ['application/json'],
         produces: ['application/json'],
       },
+      securityDefinitions: {
+        BearerAuth: {
+          type: 'apiKey',
+          name: 'Authorization',
+          in: 'header',
+          description: 'JWT Bearer token',
+        },
+      },
+      security: [{ BearerAuth: [] }],
     });
 
     await fastify.register(swaggerUI, {
@@ -46,44 +64,11 @@ async function start() {
       transformStaticCSP: (header) => header,
     });
 
-    // Rutas
-    fastify.get('/', {
-      schema: {
-        description: 'Ruta principal',
-        response: {
-          200: {
-            type: 'object',
-            properties: {
-              message: { type: 'string' },
-            },
-          },
-        },
-      },
-      handler: async () => {
-        return { message: 'Hola desde Fastify + MongoDB' };
-      },
+    await fastify.register(require('./features/auth'), {
+      prefix: '/auth', // 👈 esto define la ruta base
     });
 
-    fastify.get('/error', {
-      schema: {
-        description: 'Ruta para probar error',
-        response: {
-          400: {
-            type: 'object',
-            properties: {
-              error: { type: 'string' },
-            },
-          },
-        },
-      },
-      handler: async () => {
-        const error = new Error('Este es un error de prueba');
-        error.statusCode = 400;
-        throw error;
-      },
-    });
-
-    await fastify.listen({ port, host: '0.0.0.0' });
+    fastify.listen({ port, host: '0.0.0.0' });
     fastify.log.info(`🚀 Servidor escuchando en el puerto ${port}`);
   } catch (err) {
     fastify.log.error(err);
