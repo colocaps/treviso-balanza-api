@@ -1,26 +1,24 @@
-// errors/errorHandler.js
+// errors/error-handler.js
+
 function errorHandler(error, request, reply) {
   const statusCode =
     error.statusCode && error.statusCode >= 400 ? error.statusCode : 500;
 
-  const response = {
+  const errorResponse = {
     error: {
-      message: error.message || 'Internal Server Error',
+      message: String(error.message || 'Internal Server Error'), // 👈 esto lo forza a string
       code: statusCode,
     },
   };
 
   if (process.env.NODE_ENV === 'development') {
-    response.error.stack = error.stack;
-    response.error.validation = error.validation || null;
+    errorResponse.error.stack = error.stack;
+    if (error.validation) {
+      errorResponse.error.validation = error.validation;
+    }
   }
 
-  // Loguear errores 5xx en backend
-  if (statusCode >= 500) {
-    request.log.error(error);
-  }
-
-  reply.status(statusCode).send(response);
+  reply.status(statusCode).send(errorResponse);
 }
 
 module.exports = errorHandler;

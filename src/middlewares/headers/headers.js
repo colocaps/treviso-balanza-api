@@ -13,7 +13,9 @@ async function verifyAuthPlugin(fastify, opts) {
 
     const authHeader = request.headers.authorization;
     if (!authHeader?.startsWith('Bearer ')) {
-      return reply.code(401).send({ error: 'Token requerido' });
+      const error = new Error('Token inválido');
+      error.statusCode = 401;
+      throw error;
     }
 
     const token = authHeader.split(' ')[1];
@@ -22,7 +24,9 @@ async function verifyAuthPlugin(fastify, opts) {
       const decoded = await fastify.firebaseAdmin.auth().verifyIdToken(token);
       request.user = decoded;
     } catch (err) {
-      return reply.code(401).send({ error: 'Token inválido' });
+      const error = new Error('Token inválido');
+      error.statusCode = 401;
+      throw error;
     }
   });
 }

@@ -1,4 +1,5 @@
 // features/auth/api/login.api.js
+const errorResponseSchema = require('../../../middlewares/errors/error-response.schemma');
 
 const registerSchemma = {
   description:
@@ -20,9 +21,10 @@ const registerSchemma = {
       name: { type: 'string', minLength: 1 },
       lastname: { type: 'string', minLength: 1 },
       dni: { type: 'string', minLength: 6 },
-      profile: { type: 'string', pattern: '^[0-9a-fA-F]{24}$' }, // ObjectId mongo
+      email: { type: 'string', minLength: 6 },
+      profile: { type: 'string' },
     },
-    required: ['name', 'lastname', 'dni', 'profile'],
+    required: ['name', 'lastname', 'dni', 'email'],
   },
   response: {
     201: {
@@ -39,12 +41,6 @@ const registerSchemma = {
             profile: { type: 'string' },
           },
         },
-      },
-    },
-    500: {
-      type: 'object',
-      properties: {
-        error: { type: 'string' },
       },
     },
   },
@@ -67,7 +63,6 @@ const getUserSchemma = {
     200: {
       type: 'object',
       properties: {
-        success: { type: 'boolean' },
         user: {
           type: 'object',
           properties: {
@@ -79,12 +74,6 @@ const getUserSchemma = {
             profile: { type: 'string' },
           },
         },
-      },
-    },
-    400: {
-      type: 'object',
-      properties: {
-        error: { type: 'string' },
       },
     },
   },
@@ -137,10 +126,56 @@ const getUsersSchemma = {
         },
       ],
     },
-    400: {
+  },
+};
+
+const updateUserSchema = {
+  description: 'Actualiza los datos del usuario autenticado',
+  tags: ['Auth'],
+  headers: {
+    type: 'object',
+    properties: {
+      Authorization: {
+        type: 'string',
+        description: 'Token JWT Bearer de Firebase',
+      },
+    },
+    required: ['Authorization'],
+  },
+  body: {
+    type: 'object',
+    properties: {
+      name: { type: 'string' },
+      lastname: { type: 'string' },
+      dni: { type: 'string' },
+      profile: { type: 'string' }, // nombre del perfil
+    },
+  },
+  response: {
+    200: {
       type: 'object',
       properties: {
-        error: { type: 'string' },
+        user: {
+          type: 'object',
+          properties: {
+            uid: { type: 'string' },
+            email: { type: 'string' },
+            name: { type: 'string' },
+            lastname: { type: 'string' },
+            dni: { type: 'string' },
+            profile: {
+              type: 'object',
+              properties: {
+                _id: { type: 'string' },
+                name: { type: 'string' },
+                permissions: {
+                  type: 'array',
+                  items: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
       },
     },
   },
@@ -150,4 +185,5 @@ module.exports = {
   getUserSchemma,
   registerSchemma,
   getUsersSchemma,
+  updateUserSchema,
 };

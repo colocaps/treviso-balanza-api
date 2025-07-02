@@ -63,7 +63,10 @@ async function start() {
       staticCSP: true,
       transformStaticCSP: (header) => header,
     });
-
+    await fastify.register(require('@fastify/cors'), {
+      origin: '*',
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    });
     await fastify.register(require('./features/auth'), {
       prefix: '/auth', // 👈 esto define la ruta base
     });

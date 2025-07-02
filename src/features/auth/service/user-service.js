@@ -1,4 +1,5 @@
 const User = require('../model/user');
+require('../model/profile');
 
 async function getAllUsers() {
   return await User.find({});
