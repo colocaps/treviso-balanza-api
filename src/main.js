@@ -66,6 +66,9 @@ async function start() {
     await fastify.register(require('@fastify/cors'), {
       origin: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+      exposedHeaders: ['Content-Type', 'Authorization'],
+      credentials: true,
     });
 
     await fastify.register(require('./features/auth'), {
