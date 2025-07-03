@@ -77,8 +77,9 @@ async function start() {
       // también deberías añadir la IP de tu máquina host y el puerto de Flutter.
       // Ejemplo: 'http://192.168.1.X:XXXX'
     ];
+    const fastifyCors = require('@fastify/cors'); // <--- Make sure you assign it to a variable, e.g., fastifyCors
 
-    await fastify.register(cors, {
+    await fastify.register(fastifyCors, {
       origin: (origin, callback) => {
         // Si el origen de la solicitud no existe (por ejemplo, es una solicitud directa desde Postman),
         // o si está en nuestra lista de orígenes permitidos
