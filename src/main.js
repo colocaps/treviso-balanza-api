@@ -63,12 +63,35 @@ async function start() {
       staticCSP: true,
       transformStaticCSP: (header) => header,
     });
-    await fastify.register(require('@fastify/cors'), {
-      origin: true,
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
-      exposedHeaders: ['Content-Type', 'Authorization'],
-      credentials: true,
+    const allowedOrigins = [
+      // ***** ESTE ES EL MÁS IMPORTANTE PARA TU DESARROLLO LOCAL *****
+      'http://localhost:5000', // EJEMPLO: Si Flutter Web se ejecuta en http://localhost:5000
+      'http://127.0.0.1:5000', // A veces localhost se resuelve a 127.0.0.1
+
+      // También mantén los dominios de tu API de Render para cuando sí la despliegues,
+      // o para otras pruebas si las haces desde esos dominios.
+      'https://treviso-balanza-api.onrender-dev.com',
+      'https://treviso-balanza-api.onrender.com',
+
+      // Si estás probando desde otro dispositivo en tu red local (ej. tu celular),
+      // también deberías añadir la IP de tu máquina host y el puerto de Flutter.
+      // Ejemplo: 'http://192.168.1.X:XXXX'
+    ];
+
+    await fastify.register(cors, {
+      origin: (origin, callback) => {
+        // Si el origen de la solicitud no existe (por ejemplo, es una solicitud directa desde Postman),
+        // o si está en nuestra lista de orígenes permitidos
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true); // Permite la solicitud
+        } else {
+          // Bloquea la solicitud si el origen no está permitido
+          callback(new Error('No permitido por CORS'), false);
+        }
+      },
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Métodos HTTP que permites
+      allowedHeaders: ['Content-Type', 'Authorization'], // Encabezados personalizados que permites
+      credentials: true, // Si tu cliente necesita enviar cookies o credenciales
     });
 
     await fastify.register(require('./features/auth'), {
