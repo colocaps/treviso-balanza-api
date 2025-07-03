@@ -12,6 +12,7 @@ require('dotenv').config();
 const fastify = Fastify({
   logger: true,
 });
+const fastifyCors = require('@fastify/cors');
 
 fastify.setErrorHandler(errorHandler);
 
@@ -77,7 +78,6 @@ async function start() {
       // también deberías añadir la IP de tu máquina host y el puerto de Flutter.
       // Ejemplo: 'http://192.168.1.X:XXXX'
     ];
-    const fastifyCors = require('@fastify/cors'); // <--- Make sure you assign it to a variable, e.g., fastifyCors
 
     await fastify.register(fastifyCors, {
       origin: (origin, callback) => {
