@@ -7,7 +7,7 @@ const path = require('path');
 let serviceAccount;
 
 // Definimos el entorno desde ENVIRONMENT o fallback a 'local'
-const environment = process.env.ENVIRONMENT || 'local';
+const environment = process.env.NODE_ENV || 'local';
 
 // 🔁 Determinar archivo de servicio
 if (environment === 'production' || environment === 'development') {
