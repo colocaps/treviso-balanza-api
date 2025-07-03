@@ -6,7 +6,10 @@ const path = require('path');
 
 let serviceAccount;
 
-if (process.env.NODE_ENV === 'production') {
+if (
+  process.env.NODE_ENV === 'production' ||
+  process.env.NODE_ENV === 'development'
+) {
   // En Render (o producción), usar Secret File montado en /etc/secrets
   const secretPath = '/etc/secrets/firebase-service-account.json';
   serviceAccount = JSON.parse(fs.readFileSync(secretPath, 'utf8'));
