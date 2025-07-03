@@ -2,7 +2,7 @@ const User = require('../model/user');
 require('../model/profile');
 
 async function getAllUsers() {
-  return await User.find({});
+  return await User.find({}).populate('profile');
 }
 
 async function getUserById(id) {

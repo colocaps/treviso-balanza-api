@@ -1,5 +1,4 @@
 // features/auth/api/login.api.js
-const errorResponseSchema = require('../../../middlewares/errors/error-response.schemma');
 
 const registerSchemma = {
   description:
@@ -71,7 +70,18 @@ const getUserSchemma = {
             name: { type: 'string' },
             lastname: { type: 'string' },
             dni: { type: 'string' },
-            profile: { type: 'string' },
+            profile: {
+              type: 'object',
+              properties: {
+                _id: { type: 'string' },
+                name: { type: 'string' },
+                permissions: {
+                  type: 'array',
+                  items: { type: 'string' },
+                },
+              },
+              required: ['_id', 'name', 'permissions'],
+            },
           },
         },
       },
@@ -104,7 +114,17 @@ const getUsersSchemma = {
           name: { type: 'string', example: 'Juan' },
           lastname: { type: 'string', example: 'Pérez' },
           dni: { type: 'string', example: '12345678' },
-          profile: { type: 'string', example: '64f7cdebe1f4b11234567890' },
+          profile: {
+            type: 'object',
+            properties: {
+              _id: { type: 'string' },
+              name: { type: 'string' },
+              permissions: {
+                type: 'array',
+                items: { type: 'string' },
+              },
+            },
+          },
         },
       },
       example: [
@@ -148,7 +168,18 @@ const updateUserSchema = {
       name: { type: 'string' },
       lastname: { type: 'string' },
       dni: { type: 'string' },
-      profile: { type: 'string' }, // nombre del perfil
+      profile: {
+        type: 'object',
+        properties: {
+          _id: { type: 'string' },
+          name: { type: 'string' },
+          permissions: {
+            type: 'array',
+            items: { type: 'string' },
+          },
+        },
+        required: ['_id', 'name', 'permissions'],
+      },
     },
   },
   response: {

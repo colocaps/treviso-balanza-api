@@ -17,6 +17,7 @@ async function userController(fastify, options) {
     handler: async (request, reply) => {
       try {
         const users = await userService.getAllUsers();
+        console.log('Usuarios encontrado:', users);
         return users;
       } catch (err) {
         throw err;
