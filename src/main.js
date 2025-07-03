@@ -4,15 +4,13 @@ const mongoose = require('mongoose');
 const errorHandler = require('./middlewares/errors/error-handler');
 const swagger = require('@fastify/swagger');
 const swaggerUI = require('@fastify/swagger-ui');
-const AutoLoad = require('@fastify/autoload');
-const path = require('path');
+const fastifyCors = require('@fastify/cors');
 
 require('dotenv').config();
 
 const fastify = Fastify({
   logger: true,
 });
-const fastifyCors = require('@fastify/cors');
 
 fastify.setErrorHandler(errorHandler);
 
