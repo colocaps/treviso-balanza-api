@@ -6,18 +6,19 @@ const path = require('path');
 
 let serviceAccount;
 
-if (
-  process.env.NODE_ENV === 'production' ||
-  process.env.NODE_ENV === 'development'
-) {
-  // En Render (o producción), usar Secret File montado en /etc/secrets
-  const secretPath = '/etc/secrets/firebase-service-account.json';
+// Definimos el entorno desde ENVIRONMENT o fallback a 'local'
+const environment = process.env.ENVIRONMENT || 'local';
+
+// 🔁 Determinar archivo de servicio
+if (environment === 'production' || environment === 'development') {
+  // En Render: usar el Secret File correspondiente montado en /etc/secrets
+  const secretPath = `/etc/secrets/firebase-service-account-${environment}.json`;
   serviceAccount = JSON.parse(fs.readFileSync(secretPath, 'utf8'));
 } else {
-  // En local, usar archivo en carpeta secrets
+  // En local: usar el archivo de desarrollo
   const localPath = path.join(
     __dirname,
-    '../../secrets/firebase-service-account.json',
+    '../../secrets/firebase-service-account-development.json',
   );
   serviceAccount = require(localPath);
 }
@@ -29,7 +30,6 @@ const firebasePlugin = async function (fastify, opts) {
     });
   }
 
-  // Exponé admin como propiedad de fastify
   fastify.decorate('firebaseAdmin', admin);
 };
 
