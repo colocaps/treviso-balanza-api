@@ -71,6 +71,7 @@ async function start() {
       // o para otras pruebas si las haces desde esos dominios.
       'https://treviso-balanza-api.onrender-dev.com',
       'https://treviso-balanza-api.onrender.com',
+      'https://balanza-dev.onrender.com/',
 
       // Si estás probando desde otro dispositivo en tu red local (ej. tu celular),
       // también deberías añadir la IP de tu máquina host y el puerto de Flutter.
