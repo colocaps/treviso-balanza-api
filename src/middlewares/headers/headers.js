@@ -6,6 +6,8 @@ async function verifyAuthPlugin(fastify, opts) {
   fastify.addHook('onRequest', async (request, reply) => {
     const url = request.raw.url;
 
+    if (request.method === 'OPTIONS') return;
+
     // Excluir rutas públicas como Swagger y otras
     const isPublic = url.startsWith('/docs') || url.startsWith('/public');
 
