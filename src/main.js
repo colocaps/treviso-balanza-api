@@ -79,19 +79,10 @@ async function start() {
     ];
 
     await fastify.register(fastifyCors, {
-      origin: (origin, callback) => {
-        // Si el origen de la solicitud no existe (por ejemplo, es una solicitud directa desde Postman),
-        // o si está en nuestra lista de orígenes permitidos
-        if (!origin || allowedOrigins.includes(origin)) {
-          callback(null, true); // Permite la solicitud
-        } else {
-          // Bloquea la solicitud si el origen no está permitido
-          callback(new Error('No permitido por CORS'), false);
-        }
-      },
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Métodos HTTP que permites
-      allowedHeaders: ['Content-Type', 'Authorization'], // Encabezados personalizados que permites
-      credentials: true, // Si tu cliente necesita enviar cookies o credenciales
+      origin: '*',
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Métodos HTTP que permites
+      allowedHeaders: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Encabezados personalizados que permites
+      // credentials: true, // Si tu cliente necesita enviar cookies o credenciales
     });
 
     await fastify.register(require('./features/auth'), {
