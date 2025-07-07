@@ -89,6 +89,10 @@ async function start() {
       prefix: '/auth', // 👈 esto define la ruta base
     });
 
+    await fastify.register(require('./features/person'), {
+      prefix: '/person', // 👈 esto define la ruta base
+    });
+
     fastify.listen({ port, host: '0.0.0.0' });
     fastify.log.info(`🚀 Servidor escuchando en el puerto ${port}`);
   } catch (err) {

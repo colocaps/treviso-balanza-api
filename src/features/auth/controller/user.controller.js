@@ -6,7 +6,6 @@ const {
   getUsersSchemma,
   updateUserSchema,
 } = require('../api/user.api');
-const buildErrorResponse = require('../../../middlewares/errors/error-handler');
 
 async function userController(fastify, options) {
   // Ruta para obtener todos los usuarios
