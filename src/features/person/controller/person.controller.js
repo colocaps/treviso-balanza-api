@@ -39,7 +39,7 @@ async function personController(fastify, options) {
       try {
         validatePersonTypes(request.body.personTypes);
         const updatedPerson = await updatePersonById(id, request.body);
-        return reply.code(200).send(updatedPerson);
+        return reply.code(201).send(updatedPerson);
       } catch (err) {
         const status = err.statusCode || 500;
         return reply.code(status).send({ error: err.message });
