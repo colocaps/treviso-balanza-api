@@ -49,7 +49,7 @@ async function personController(fastify, options) {
 
   fastify.route({
     method: 'GET',
-    url: '/persons/',
+    url: '/persons',
     schema: getAllPersonsSchema,
     handler: async (request, reply) => {
       try {
