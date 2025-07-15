@@ -19,7 +19,7 @@ const registerSchemma = {
     properties: {
       name: { type: 'string', minLength: 1 },
       lastname: { type: 'string', minLength: 1 },
-      dni: { type: 'string', minLength: 6 },
+      dni: { type: 'string', minLength: 8 },
       email: { type: 'string', minLength: 6 },
       profile: { type: 'string' },
     },
