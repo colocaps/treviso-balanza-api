@@ -65,6 +65,7 @@ const getUserSchemma = {
         user: {
           type: 'object',
           properties: {
+            _id: { type: 'string' },
             uid: { type: 'string' },
             email: { type: 'string' },
             name: { type: 'string' },
@@ -109,6 +110,7 @@ const getUsersSchemma = {
       items: {
         type: 'object',
         properties: {
+          _id: { type: 'string' },
           uid: { type: 'string', example: 'abc123' },
           email: { type: 'string', example: 'usuario@example.com' },
           name: { type: 'string', example: 'Juan' },
@@ -167,20 +169,11 @@ const updateUserSchema = {
     properties: {
       name: { type: 'string' },
       lastname: { type: 'string' },
+      email: { type: 'string' },
       dni: { type: 'string' },
-      profile: {
-        type: 'object',
-        properties: {
-          _id: { type: 'string' },
-          name: { type: 'string' },
-          permissions: {
-            type: 'array',
-            items: { type: 'string' },
-          },
-        },
-        required: ['_id', 'name', 'permissions'],
-      },
+      profile: { type: 'string' },
     },
+    additionalProperties: false,
   },
   response: {
     200: {
@@ -189,6 +182,7 @@ const updateUserSchema = {
         user: {
           type: 'object',
           properties: {
+            _id: { type: 'string' },
             uid: { type: 'string' },
             email: { type: 'string' },
             name: { type: 'string' },

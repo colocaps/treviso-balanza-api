@@ -118,36 +118,42 @@ async function userController(fastify, options) {
       }
     },
   });
+
   fastify.route({
     method: 'PUT',
-    url: '/user',
+    url: '/user/:id',
     schema: updateUserSchema,
     handler: async (request, reply) => {
       try {
         const authHeader = request.headers.authorization;
         const idToken = authHeader.split(' ')[1];
-
         const decoded = await fastify.firebaseAdmin
           .auth()
           .verifyIdToken(idToken);
 
-        const uid = decoded.uid;
-
-        const User = require('../model/user'); // Ajustá la ruta si es distinta
+        const User = require('../model/user');
         const Profile = require('../model/profile');
 
-        const user = await User.findOne({ uid });
+        // Validar que quien hace el request sea admin
+        const requestingUser = await User.findOne({
+          uid: decoded.uid,
+        }).populate('profile');
+        if (!requestingUser || requestingUser.profile.name !== 'admin') {
+          return reply.code(403).send({ error: 'No autorizado' });
+        }
 
+        // Buscar usuario objetivo
+        const user = await User.findById(request.params.id);
         if (!user) {
           return reply.code(404).send({ error: 'Usuario no encontrado' });
         }
 
-        // Actualización condicional de campos
+        // Actualizar campos
         if (request.body.name) user.name = request.body.name;
         if (request.body.lastname) user.lastname = request.body.lastname;
         if (request.body.dni) user.dni = request.body.dni;
+        if (request.body.email) user.email = request.body.email;
 
-        // Cambiar perfil si se especifica
         if (request.body.profile) {
           const profile = await Profile.findOne({ name: request.body.profile });
           if (!profile) {
@@ -158,9 +164,7 @@ async function userController(fastify, options) {
 
         await user.save();
 
-        // Opcional: devolver el perfil populado
         const updatedUser = await User.findById(user._id).populate('profile');
-
         return reply.code(200).send({ user: updatedUser });
       } catch (err) {
         request.log.error(err);
