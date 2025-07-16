@@ -1,5 +1,15 @@
 const registerPersonSchemma = {
   tags: ['Person'],
+  headers: {
+    type: 'object',
+    properties: {
+      Authorization: {
+        type: 'string',
+        description: 'Token JWT Bearer de Firebase',
+      },
+    },
+    required: ['Authorization'],
+  },
   body: {
     type: 'object',
     required: ['name', 'cuit'],
@@ -40,6 +50,16 @@ const registerPersonSchemma = {
 
 const updatePersonSchema = {
   tags: ['Person'],
+  headers: {
+    type: 'object',
+    properties: {
+      Authorization: {
+        type: 'string',
+        description: 'Token JWT Bearer de Firebase',
+      },
+    },
+    required: ['Authorization'],
+  },
   params: {
     type: 'object',
     properties: {
@@ -76,6 +96,16 @@ const updatePersonSchema = {
 
 const getAllPersonsSchema = {
   tags: ['Person'],
+  headers: {
+    type: 'object',
+    properties: {
+      Authorization: {
+        type: 'string',
+        description: 'Token JWT Bearer de Firebase',
+      },
+    },
+    required: ['Authorization'],
+  },
   description: 'Obtener todas las personas',
   response: {
     200: {
@@ -98,6 +128,16 @@ const getAllPersonsSchema = {
 };
 const getPersonByIdSchema = {
   tags: ['Person'],
+  headers: {
+    type: 'object',
+    properties: {
+      Authorization: {
+        type: 'string',
+        description: 'Token JWT Bearer de Firebase',
+      },
+    },
+    required: ['Authorization'],
+  },
   description: 'Obtener una persona por ID',
   params: {
     type: 'object',

@@ -200,7 +200,10 @@ const updateMaterialClassificationSchema = {
   headers: {
     type: 'object',
     properties: {
-      Authorization: { type: 'string' },
+      Authorization: {
+        type: 'string',
+        description: 'Token JWT Bearer de Firebase',
+      },
     },
     required: ['Authorization'],
   },
@@ -237,7 +240,10 @@ const updateMaterialSchema = {
   headers: {
     type: 'object',
     properties: {
-      Authorization: { type: 'string' },
+      Authorization: {
+        type: 'string',
+        description: 'Token JWT Bearer de Firebase',
+      },
     },
     required: ['Authorization'],
   },
@@ -309,7 +315,10 @@ const getAllMaterialTypesSchema = {
   headers: {
     type: 'object',
     properties: {
-      Authorization: { type: 'string' },
+      Authorization: {
+        type: 'string',
+        description: 'Token JWT Bearer de Firebase',
+      },
     },
     required: ['Authorization'],
   },
@@ -321,7 +330,7 @@ const getAllMaterialTypesSchema = {
         properties: {
           _id: { type: 'string' },
           name: { type: 'string' },
-          active: { type: 'boolean' },
+          isActive: { type: 'boolean' },
         },
       },
     },
@@ -335,7 +344,10 @@ const getAllMaterialClassificationsSchema = {
   headers: {
     type: 'object',
     properties: {
-      Authorization: { type: 'string' },
+      Authorization: {
+        type: 'string',
+        description: 'Token JWT Bearer de Firebase',
+      },
     },
     required: ['Authorization'],
   },
@@ -347,13 +359,13 @@ const getAllMaterialClassificationsSchema = {
         properties: {
           _id: { type: 'string' },
           name: { type: 'string' },
-          active: { type: 'boolean' },
+          isActive: { type: 'boolean' },
           materialType: {
             type: 'object',
             properties: {
               _id: { type: 'string' },
               name: { type: 'string' },
-              active: { type: 'boolean' },
+              isActive: { type: 'boolean' },
             },
           },
         },

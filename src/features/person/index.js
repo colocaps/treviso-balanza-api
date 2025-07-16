@@ -1,4 +1,4 @@
-// features/auth/index.js
+// features/person/index.js
 const personController = require('./controller/person.controller');
 
 async function personPlugin(fastify, options) {
