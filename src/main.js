@@ -101,6 +101,10 @@ async function start() {
       prefix: '/vehicles', // 👈 esto define la ruta base
     });
 
+    await fastify.register(require('./features/visit'), {
+      prefix: '/visits', // 👈 esto define la ruta base
+    });
+
     fastify.listen({ port, host: '0.0.0.0' });
     fastify.log.info(`🚀 Servidor escuchando en el puerto ${port}`);
   } catch (err) {
