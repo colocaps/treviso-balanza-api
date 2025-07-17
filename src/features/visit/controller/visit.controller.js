@@ -6,21 +6,26 @@ const {
   addWeighingSchema,
   completeWeighingSchema,
   closeVisitSchema,
+  getAllVisitsSchema,
+  getOpenVisitsSchema,
+  getVisitByIdSchema,
+  VisitSchema,
 } = require('../api/visit.api');
 
 async function visitController(fastify, options) {
+  fastify.addSchema(VisitSchema);
   fastify.route({
     url: '/',
     method: 'POST',
     schema: createVisitSchema,
     handler: async (request, reply) => {
       try {
-        const { vehicleId, driverId, personId, operation } = request.body;
+        const { vehicleId, driverId, personId, operationType } = request.body;
         const visit = await visitService.createVisit({
           vehicleId,
           driverId,
           personId,
-          operation,
+          operationType,
         });
         return reply.code(201).send(visit);
       } catch (err) {
@@ -37,10 +42,10 @@ async function visitController(fastify, options) {
     handler: async (request, reply) => {
       try {
         const { visitId } = request.params;
-        const { materialId, grossWeight } = request.body;
+        const { materialId, weight } = request.body;
         const updatedVisit = await visitService.addWeighing(visitId, {
           materialId,
-          grossWeight,
+          weight,
         });
         return reply.code(200).send(updatedVisit);
       } catch (err) {
@@ -51,18 +56,18 @@ async function visitController(fastify, options) {
   });
 
   fastify.route({
-    url: '/:visitId/weighings/:weighingId/',
+    url: '/:visitId/weighings/:weighingId',
     method: 'PUT',
     schema: completeWeighingSchema,
     handler: async (request, reply) => {
       try {
         const { visitId, weighingId } = request.params;
-        const { tareWeight } = request.body;
+        const { weight } = request.body;
 
         const updatedVisit = await visitService.completeWeighing(
           visitId,
           weighingId,
-          tareWeight,
+          weight,
         );
 
         return reply.code(200).send(updatedVisit);
@@ -84,6 +89,54 @@ async function visitController(fastify, options) {
         const closedVisit = await visitService.closeVisit(visitId);
 
         return reply.code(200).send(closedVisit);
+      } catch (err) {
+        request.log.error(err);
+        throw err;
+      }
+    },
+  });
+
+  fastify.route({
+    url: '/',
+    method: 'GET',
+    schema: getAllVisitsSchema,
+    handler: async (request, reply) => {
+      try {
+        const visits = await visitService.getAllVisits();
+        return reply.code(200).send(visits);
+      } catch (err) {
+        request.log.error(err);
+        throw err;
+      }
+    },
+  });
+
+  fastify.route({
+    url: '/open',
+    method: 'GET',
+    schema: getOpenVisitsSchema,
+    handler: async (request, reply) => {
+      try {
+        const visits = await visitService.getOpenVisits();
+        return reply.code(200).send(visits);
+      } catch (err) {
+        request.log.error(err);
+        throw err;
+      }
+    },
+  });
+
+  fastify.route({
+    url: '/:visitId',
+    method: 'GET',
+    schema: getVisitByIdSchema,
+    handler: async (request, reply) => {
+      try {
+        const { visitId } = request.params;
+        const visit = await visitService.getVisitById(visitId);
+        if (!visit)
+          return reply.code(404).send({ message: 'Visita no encontrada' });
+        return reply.code(200).send(visit);
       } catch (err) {
         request.log.error(err);
         throw err;
