@@ -87,6 +87,7 @@ const VisitSchema = {
         },
       },
     },
+    details: { type: 'string' },
   },
 };
 
@@ -125,6 +126,7 @@ const createVisitSchema = {
         operationType: { type: 'string' },
         entryDate: { type: 'string' },
         isClosed: { type: 'boolean' },
+        details: { type: 'string' },
       },
     },
   },

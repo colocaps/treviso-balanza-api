@@ -1,6 +1,12 @@
 const Visit = require('../model/visit');
 
-async function createVisit({ vehicleId, driverId, personId, operationType }) {
+async function createVisit({
+  vehicleId,
+  driverId,
+  personId,
+  operationType,
+  details,
+}) {
   return await Visit.create({
     vehicle: vehicleId,
     driver: driverId,
@@ -9,6 +15,7 @@ async function createVisit({ vehicleId, driverId, personId, operationType }) {
     entryDate: new Date(),
     isClosed: false,
     weighings: [],
+    details: details,
   });
 }
 

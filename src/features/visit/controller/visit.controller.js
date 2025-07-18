@@ -20,12 +20,14 @@ async function visitController(fastify, options) {
     schema: createVisitSchema,
     handler: async (request, reply) => {
       try {
-        const { vehicleId, driverId, personId, operationType } = request.body;
+        const { vehicleId, driverId, personId, operationType, details } =
+          request.body;
         const visit = await visitService.createVisit({
           vehicleId,
           driverId,
           personId,
           operationType,
+          details,
         });
         return reply.code(201).send(visit);
       } catch (err) {

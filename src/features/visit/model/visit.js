@@ -41,6 +41,7 @@ const visitSchema = new mongoose.Schema({
 
   isClosed: { type: Boolean, default: false },
   isActive: { type: Boolean, default: true },
+  details: { type: String },
 });
 
 module.exports = mongoose.model('Visit', visitSchema);
