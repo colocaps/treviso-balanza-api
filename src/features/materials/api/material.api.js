@@ -97,20 +97,21 @@ const createMaterialSchema = {
       properties: {
         _id: { type: 'string' },
         name: { type: 'string' },
-        materialType: {
-          type: 'object',
-          properties: {
-            _id: { type: 'string' },
-            name: { type: 'string' },
-            isActive: { type: 'boolean' },
-          },
-        },
+
         classification: {
           type: 'object',
           properties: {
             _id: { type: 'string' },
             name: { type: 'string' },
             isActive: { type: 'boolean' },
+            materialType: {
+              type: 'object',
+              properties: {
+                _id: { type: 'string' },
+                name: { type: 'string' },
+                isActive: { type: 'boolean' },
+              },
+            },
           },
         },
         isActive: { type: 'boolean' },

@@ -184,7 +184,10 @@ async function toggleMaterialActive(id) {
   material.isActive = !material.isActive;
   await material.save();
 
-  return material;
+  return await Material.findById(material._id).populate({
+    path: 'classification',
+    populate: { path: 'materialType' },
+  });
 }
 
 async function updateMaterial(materialId, updateData) {

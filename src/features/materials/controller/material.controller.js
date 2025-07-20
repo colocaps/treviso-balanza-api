@@ -188,7 +188,7 @@ async function materialController(fastify, options) {
           request.params.id,
           request.body,
         );
-        return reply.code(200).send({ material: updatedMaterial });
+        return reply.code(200).send(updatedMaterial);
       } catch (err) {
         request.log.error(err);
         throw err;
