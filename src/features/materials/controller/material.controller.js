@@ -123,7 +123,7 @@ async function materialController(fastify, options) {
       try {
         const updated = await materialService.updateMaterialClassification(
           request.params.id,
-          request.body.name,
+          request.body,
         );
         return reply.code(200).send(updated);
       } catch (err) {

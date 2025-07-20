@@ -56,7 +56,15 @@ const createMaterialClassificationSchema = {
       properties: {
         _id: { type: 'string' },
         name: { type: 'string' },
-        materialType: { type: 'string' },
+        materialType: {
+          type: 'object',
+          properties: {
+            _id: { type: 'string' },
+            name: { type: 'string' },
+            isActive: { type: 'boolean' },
+          },
+          required: ['_id', 'name', 'isActive'],
+        },
         isActive: { type: 'boolean' },
       },
     },
@@ -227,7 +235,15 @@ const updateMaterialClassificationSchema = {
       properties: {
         _id: { type: 'string' },
         name: { type: 'string' },
-        materialType: { type: 'string' },
+        materialType: {
+          type: 'object',
+          properties: {
+            _id: { type: 'string' },
+            name: { type: 'string' },
+            isActive: { type: 'boolean' },
+          },
+          required: ['_id', 'name', 'isActive'],
+        },
         isActive: { type: 'boolean' },
       },
     },
@@ -268,8 +284,24 @@ const updateMaterialSchema = {
       properties: {
         _id: { type: 'string' },
         name: { type: 'string' },
-        materialType: { type: 'string' },
-        classification: { type: 'string' },
+        classification: {
+          type: 'object',
+          properties: {
+            _id: { type: 'string' },
+            name: { type: 'string' },
+            isActive: { type: 'boolean' },
+            materialType: {
+              type: 'object',
+              properties: {
+                _id: { type: 'string' },
+                name: { type: 'string' },
+                isActive: { type: 'boolean' },
+              },
+              required: ['_id', 'name', 'isActive'],
+            },
+          },
+          required: ['_id', 'name', 'isActive', 'materialType'],
+        },
         isActive: { type: 'boolean' },
       },
     },

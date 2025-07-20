@@ -34,14 +34,20 @@ async function createMaterialClassification(name, materialTypeId) {
     } else {
       existingClassification.isActive = true;
       await existingClassification.save();
-      return existingClassification;
+      return await MaterialClassification.findById(
+        existingClassification._id,
+      ).populate('materialType');
     }
   }
 
-  return await MaterialClassification.create({
+  const newClassification = await MaterialClassification.create({
     name,
     materialType: materialTypeId,
   });
+
+  return await MaterialClassification.findById(newClassification._id).populate(
+    'materialType',
+  );
 }
 
 async function createMaterial(name, classificationId) {
@@ -54,18 +60,30 @@ async function createMaterial(name, classificationId) {
     if (existingMaterial.isActive) {
       throw new Error('Ya existe un material activo con ese nombre');
     } else {
-      // Si está desactivado, activarlo y actualizar la clasificación si es necesario
       existingMaterial.isActive = true;
       existingMaterial.classification = classificationId;
       await existingMaterial.save();
-      return existingMaterial;
+      return await Material.findById(existingMaterial._id).populate({
+        path: 'classification',
+        populate: {
+          path: 'materialType',
+        },
+      });
     }
   }
 
   // Si no existe, creamos uno nuevo
-  return await Material.create({
+  const newMaterial = await Material.create({
     name,
     classification: classificationId,
+  });
+
+  // <-- AQUI EL FALTANTE: devolver el material creado populado
+  return await Material.findById(newMaterial._id).populate({
+    path: 'classification',
+    populate: {
+      path: 'materialType',
+    },
   });
 }
 
@@ -88,13 +106,31 @@ async function getAllMaterials() {
   });
 }
 
-async function updateMaterialClassification(id, name) {
-  return await MaterialClassification.findByIdAndUpdate(
-    id,
-    { name },
-    { new: true },
-  );
+async function updateMaterialClassification(id, updateData) {
+  const updateFields = {};
+
+  if (updateData.name) {
+    updateFields.name = updateData.name;
+  }
+
+  if (updateData.materialTypeId) {
+    // Opcional: podés validar que el materialTypeId exista antes de asignarlo
+    const materialTypeExists = await MaterialType.findById(
+      updateData.materialTypeId,
+    );
+    if (!materialTypeExists) {
+      throw new Error('Tipo de material no encontrado');
+    }
+    updateFields.materialType = updateData.materialTypeId;
+  }
+
+  // Actualizamos con los campos que llegaron
+  await MaterialClassification.findByIdAndUpdate(id, updateFields);
+
+  // Buscamos y devolvemos el documento actualizado con populate
+  return await MaterialClassification.findById(id).populate('materialType');
 }
+
 async function toggleMaterialClassificationActive(id) {
   // Validar que no existan materiales asociados
   const count = await Material.countDocuments({ classification: id });
@@ -104,11 +140,17 @@ async function toggleMaterialClassificationActive(id) {
     );
   }
 
-  const classification = await MaterialClassification.findById(id);
+  let classification = await MaterialClassification.findById(id);
   if (!classification) throw new Error('Clasificación no encontrada');
 
   classification.isActive = !classification.isActive;
   await classification.save();
+
+  // Volver a buscar con populate
+  classification = await MaterialClassification.findById(id).populate(
+    'materialType',
+  );
+
   return classification;
 }
 
