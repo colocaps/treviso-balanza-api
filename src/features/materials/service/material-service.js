@@ -98,7 +98,7 @@ async function getAllMaterialClassifications() {
 }
 
 async function getAllMaterials() {
-  return await Material.find().populate({
+  return await Material.find({ isActive: true }).populate({
     path: 'classification',
     populate: {
       path: 'materialType',
