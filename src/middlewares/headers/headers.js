@@ -8,10 +8,9 @@ async function verifyAuthPlugin(fastify, opts) {
     try {
       const url = request.raw.url;
 
-      // Ignorar preflight
       if (request.method === 'OPTIONS') return;
 
-      // Rutas públicas (Swagger, etc.)
+      // Rutas públicas
       const isPublic =
         url.startsWith('/docs') ||
         url.startsWith('/public') ||
@@ -27,9 +26,8 @@ async function verifyAuthPlugin(fastify, opts) {
 
       const token = authHeader.split(' ')[1];
       const decoded = await fastify.firebaseAdmin.auth().verifyIdToken(token);
-      request.user = decoded; // uid, email, etc.
+      request.user = decoded;
 
-      // Extraer companyId del header
       const companyId = request.headers['x-company-id'];
       if (!companyId) {
         return reply
@@ -39,14 +37,15 @@ async function verifyAuthPlugin(fastify, opts) {
 
       request.companyId = companyId;
 
-      // Excepción para el registro
+      // Excepción para el registro, no validar user->company
       if (url.startsWith('/register')) {
-        return; // Solo se valida el token y se inyecta companyId
+        return;
       }
 
-      // Validar usuario en MongoDB
-      const User = require('../features/auth/model/user');
+      // Validamos usuario en base de datos
+      const User = require('../../features/auth/model/user');
       const user = await User.findOne({ uid: decoded.uid });
+
       if (!user) {
         return reply
           .code(404)
@@ -54,14 +53,14 @@ async function verifyAuthPlugin(fastify, opts) {
       }
 
       // Validar que el usuario pertenece al company enviado
-      if (user.company.toString() !== companyId) {
+      if (user.company && user.company.toString() !== companyId) {
         return reply.code(403).send({
           error: 'El usuario no pertenece a la compañía especificada',
         });
       }
     } catch (err) {
       request.log.error(err);
-      return reply.code(401).send({ error: 'Token inválido (catch)' });
+      return reply.code(401).send({ error: 'Token inválido catch: ' + err });
     }
   });
 }

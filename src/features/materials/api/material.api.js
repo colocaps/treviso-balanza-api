@@ -8,8 +8,12 @@ const createMaterialTypeSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   body: {
     type: 'object',
@@ -39,8 +43,12 @@ const createMaterialClassificationSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   body: {
     type: 'object',
@@ -80,8 +88,12 @@ const createMaterialSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   body: {
     type: 'object',
@@ -129,8 +141,12 @@ const getAllMaterialsSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   response: {
     200: {
@@ -176,8 +192,12 @@ const updateMaterialTypeSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   params: {
     type: 'object',
@@ -213,8 +233,12 @@ const updateMaterialClassificationSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   params: {
     type: 'object',
@@ -261,8 +285,12 @@ const updateMaterialSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   params: {
     type: 'object',
@@ -319,8 +347,12 @@ const toggleMaterialTypeSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   params: {
     type: 'object',
@@ -352,8 +384,12 @@ const getAllMaterialTypesSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   response: {
     200: {
@@ -381,8 +417,12 @@ const getAllMaterialClassificationsSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   response: {
     200: {
@@ -417,8 +457,12 @@ const toggleMaterialSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   params: {
     type: 'object',
@@ -466,8 +510,12 @@ const toggleMaterialClassificationSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   params: {
     type: 'object',

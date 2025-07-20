@@ -11,8 +11,12 @@ const registerSchemma = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   body: {
     type: 'object',
@@ -57,8 +61,12 @@ const getUserSchemma = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   response: {
     200: {
@@ -114,8 +122,12 @@ const getUsersSchemma = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   response: {
     200: {
@@ -186,8 +198,12 @@ const updateUserSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   body: {
     type: 'object',
@@ -197,6 +213,17 @@ const updateUserSchema = {
       email: { type: 'string' },
       dni: { type: 'string' },
       profile: { type: 'string' },
+      company: {
+        type: 'object',
+        properties: {
+          _id: { type: 'string' },
+          name: { type: 'string' },
+          cuit: { type: 'string' },
+          socialReason: { type: 'string' },
+          logo: { type: 'string' },
+          isActive: { type: 'boolean' },
+        },
+      },
     },
     additionalProperties: false,
   },

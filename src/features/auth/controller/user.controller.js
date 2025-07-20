@@ -154,7 +154,7 @@ async function userController(fastify, options) {
         if (request.body.lastname) user.lastname = request.body.lastname;
         if (request.body.dni) user.dni = request.body.dni;
         if (request.body.email) user.email = request.body.email;
-
+        if (request.body.company) user.company = request.body.company;
         if (request.body.profile) {
           const profile = await Profile.findOne({ name: request.body.profile });
           if (!profile) {
@@ -165,7 +165,9 @@ async function userController(fastify, options) {
 
         await user.save();
 
-        const updatedUser = await User.findById(user._id).populate('profile');
+        const updatedUser = await User.findById(user._id)
+          .populate('profile')
+          .populate('company');
         return reply.code(200).send({ user: updatedUser });
       } catch (err) {
         request.log.error(err);

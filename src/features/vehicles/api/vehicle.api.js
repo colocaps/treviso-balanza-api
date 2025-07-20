@@ -9,8 +9,12 @@ const createVehicleTypeSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   body: {
     type: 'object',
@@ -47,8 +51,12 @@ const createVehicleSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   tags: ['Vehicle'],
   body: {
@@ -93,8 +101,12 @@ const getAllVehiclesSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   response: {
     200: {
@@ -130,8 +142,12 @@ const getAllVehiclesTypesSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   response: {
     200: {
@@ -158,8 +174,12 @@ const updateVehicleSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   params: {
     type: 'object',
@@ -212,8 +232,12 @@ const toggleVehicleSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   params: {
     type: 'object',
@@ -253,8 +277,12 @@ const updateVehicleTypeSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   params: {
     type: 'object',
@@ -288,8 +316,12 @@ const toggleVehicleTypeSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   params: {
     type: 'object',

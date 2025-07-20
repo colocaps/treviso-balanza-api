@@ -101,8 +101,12 @@ const createVisitSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   body: {
     type: 'object',
@@ -142,8 +146,12 @@ const addWeighingSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   params: {
     type: 'object',
@@ -172,8 +180,12 @@ const completeWeighingSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   params: {
     type: 'object',
@@ -202,8 +214,12 @@ const closeVisitSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   params: {
     type: 'object',
@@ -223,8 +239,12 @@ const getAllVisitsSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   response: {
     200: {
@@ -243,8 +263,12 @@ const getOpenVisitsSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   response: {
     200: {
@@ -263,8 +287,12 @@ const getVisitByIdSchema = {
         type: 'string',
         description: 'Token JWT Bearer de Firebase',
       },
+      'x-company-id': {
+        type: 'string',
+        description: 'el id de la compañia',
+      },
     },
-    required: ['Authorization'],
+    required: ['Authorization', 'x-company-id'],
   },
   params: {
     type: 'object',

@@ -2,7 +2,9 @@ const User = require('../model/user');
 require('../model/profile');
 
 async function getAllUsers(companyId) {
-  return await User.find({ company: companyId }).populate('profile');
+  return await User.find({ company: companyId })
+    .populate('profile')
+    .populate('company');
 }
 
 async function getUserById(id) {
@@ -10,7 +12,7 @@ async function getUserById(id) {
 }
 
 async function getUserByUid(uid) {
-  return await User.findOne({ uid }).populate('profile');
+  return await User.findOne({ uid }).populate('profile').populate('company'); // 👈 acá está la clave
 }
 
 async function getUserByEmail(email) {
