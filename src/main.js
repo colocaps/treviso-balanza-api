@@ -6,6 +6,7 @@ const swagger = require('@fastify/swagger');
 const swaggerUI = require('@fastify/swagger-ui');
 const fastifyCors = require('@fastify/cors');
 
+const { CompanySchema } = require('./features/company/api/company.api');
 require('dotenv').config();
 
 const fastify = Fastify({
@@ -26,6 +27,7 @@ async function start() {
 
     await fastify.register(require('./services/firebase'));
     await fastify.register(require('./middlewares/headers/headers'));
+    await fastify.register(require('./middlewares/headers/x-admin'));
 
     fastify.log.info('✅ Conectado a MongoDB');
 
@@ -104,6 +106,11 @@ async function start() {
     await fastify.register(require('./features/visit'), {
       prefix: '/visits', // 👈 esto define la ruta base
     });
+
+    await fastify.register(require('./features/company'), {
+      prefix: '/company', // 👈 esto define la ruta base
+    });
+    fastify.addSchema(CompanySchema);
 
     fastify.listen({ port, host: '0.0.0.0' });
     fastify.log.info(`🚀 Servidor escuchando en el puerto ${port}`);

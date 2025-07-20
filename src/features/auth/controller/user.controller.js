@@ -15,8 +15,8 @@ async function userController(fastify, options) {
     schema: getUsersSchemma,
     handler: async (request, reply) => {
       try {
-        const users = await userService.getAllUsers();
-        console.log('Usuarios encontrado:', users);
+        const users = await userService.getAllUsers(request.companyId);
+        console.log('Usuarios encontrados:', users);
         return users;
       } catch (err) {
         throw err;
@@ -32,8 +32,8 @@ async function userController(fastify, options) {
       const { id } = request.params;
       const user = await userService.getUserById(id);
       try {
-        if (!user) {
-          const error = new Error('Usuario no encontrado');
+        if (!user || user.company.toString() !== request.companyId) {
+          const error = new Error('Usuario no encontrado en esta empresa');
           error.statusCode = 404;
           throw error;
         }
@@ -108,7 +108,8 @@ async function userController(fastify, options) {
             name: request.body.name,
             lastname: request.body.lastname,
             dni: request.body.dni,
-            profile: profile._id, // Asignamos el _id del perfil
+            profile: profile._id,
+            companyId: request.companyId, // 👈 asociar al company
           },
         );
 

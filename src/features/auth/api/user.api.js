@@ -22,6 +22,7 @@ const registerSchemma = {
       dni: { type: 'string', minLength: 8 },
       email: { type: 'string', minLength: 6 },
       profile: { type: 'string' },
+      company: { type: 'string' },
     },
     required: ['name', 'lastname', 'dni', 'email'],
   },
@@ -38,6 +39,7 @@ const registerSchemma = {
             lastname: { type: 'string' },
             dni: { type: 'string' },
             profile: { type: 'string' },
+            company: { type: 'string' },
           },
         },
       },
@@ -71,6 +73,7 @@ const getUserSchemma = {
             name: { type: 'string' },
             lastname: { type: 'string' },
             dni: { type: 'string' },
+
             profile: {
               type: 'object',
               properties: {
@@ -82,6 +85,17 @@ const getUserSchemma = {
                 },
               },
               required: ['_id', 'name', 'permissions'],
+            },
+            company: {
+              type: 'object',
+              properties: {
+                _id: { type: 'string' },
+                name: { type: 'string' },
+                cuit: { type: 'string' },
+                socialReason: { type: 'string' },
+                logo: { type: 'string' },
+                isActive: { type: 'boolean' },
+              },
             },
           },
         },
@@ -125,6 +139,17 @@ const getUsersSchemma = {
                 type: 'array',
                 items: { type: 'string' },
               },
+            },
+          },
+          company: {
+            type: 'object',
+            properties: {
+              _id: { type: 'string' },
+              name: { type: 'string' },
+              cuit: { type: 'string' },
+              socialReason: { type: 'string' },
+              logo: { type: 'string' },
+              isActive: { type: 'boolean' },
             },
           },
         },
@@ -197,6 +222,17 @@ const updateUserSchema = {
                   type: 'array',
                   items: { type: 'string' },
                 },
+              },
+            },
+            company: {
+              type: 'object',
+              properties: {
+                _id: { type: 'string' },
+                name: { type: 'string' },
+                cuit: { type: 'string' },
+                socialReason: { type: 'string' },
+                logo: { type: 'string' },
+                isActive: { type: 'boolean' },
               },
             },
           },
