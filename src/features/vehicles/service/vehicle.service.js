@@ -37,14 +37,16 @@ async function createVehicle({ brand, model, plate, vehicleTypeId }) {
     existing.vehicleType = vehicleTypeId;
 
     await existing.save();
-    return existing;
+    return await Vehicle.findById(existing._id).populate('vehicleType');
   }
-  return Vehicle.create({
+
+  const newVehicle = await Vehicle.create({
     brand,
     model,
     plate: normalizedPlate,
     vehicleType: vehicleTypeId,
   });
+  return await Vehicle.findById(newVehicle._id).populate('vehicleType');
 }
 
 async function getAllVehicles() {
@@ -73,15 +75,17 @@ async function updateVehicle(id, { brand, model, plate, vehicleTypeId }) {
 
   await vehicle.save();
 
-  return vehicle;
+  return await Vehicle.findById(vehicle._id).populate('vehicleType');
 }
 
 async function toggleVehicleActive(id) {
   const vehicle = await Vehicle.findById(id);
   if (!vehicle) throw new Error('Vehículo no encontrado');
+
   vehicle.isActive = !vehicle.isActive;
   await vehicle.save();
-  return vehicle;
+
+  return await Vehicle.findById(vehicle._id).populate('vehicleType');
 }
 
 async function updateVehicleType(id, name) {
