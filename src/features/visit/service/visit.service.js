@@ -1,5 +1,21 @@
 const Visit = require('../model/visit');
 
+const basePopulation = [
+  {
+    path: 'vehicle',
+    populate: { path: 'vehicleType' },
+  },
+  { path: 'driver' },
+  { path: 'person' },
+  {
+    path: 'weighings.material',
+    populate: {
+      path: 'classification',
+      populate: { path: 'materialType' },
+    },
+  },
+];
+
 async function createVisit({
   vehicleId,
   driverId,
@@ -7,7 +23,7 @@ async function createVisit({
   operationType,
   details,
 }) {
-  return await Visit.create({
+  const visit = await Visit.create({
     vehicle: vehicleId,
     driver: driverId,
     person: personId,
@@ -15,13 +31,23 @@ async function createVisit({
     entryDate: new Date(),
     isClosed: false,
     weighings: [],
-    details: details,
+    details,
   });
+
+  return await Visit.findById(visit._id).populate(basePopulation);
 }
 
 async function addWeighing(visitId, { materialId, weight }) {
   const visit = await Visit.findById(visitId);
   if (!visit) throw new Error('Visita no encontrada');
+
+  // Validación: visita debe estar abierta
+  if (visit.isClosed) {
+    throw new Error('No se puede agregar un pesaje a una visita cerrada');
+  }
+  if (weight <= 0) {
+    throw new Error('No se puede pesar por debajo de 0');
+  }
 
   // Validación: no permitir agregar otro weighing si hay alguno abierto
   if (visit.weighings.some((w) => !w.isClosed)) {
@@ -31,6 +57,14 @@ async function addWeighing(visitId, { materialId, weight }) {
   }
 
   const lastWeighing = visit.weighings[visit.weighings.length - 1];
+
+  if (
+    lastWeighing.grossWeight === 0 ||
+    lastWeighing.tareWeight === 0 ||
+    lastWeighing.netWeight === 0
+  ) {
+    throw new Error('Ya no se puede registrar peso, el último pesaje fue 0');
+  }
 
   if (visit.operationType === 'IN') {
     if (lastWeighing?.tareWeight != null && weight > lastWeighing.tareWeight) {
@@ -58,7 +92,7 @@ async function addWeighing(visitId, { materialId, weight }) {
   });
 
   await visit.save();
-  return visit;
+  return await Visit.findById(visit._id).populate(basePopulation);
 }
 
 async function completeWeighing(visitId, weighingId, weight) {
@@ -68,6 +102,10 @@ async function completeWeighing(visitId, weighingId, weight) {
 
   const visit = await Visit.findById(visitId);
   if (!visit) throw new Error('Visita no encontrada');
+
+  if (visit.isClosed) {
+    throw new Error('No se puede completar un pesaje de una visita cerrada');
+  }
 
   const weighing = visit.weighings.id(weighingId);
   if (!weighing) throw new Error('Pesaje no encontrado');
@@ -97,7 +135,7 @@ async function completeWeighing(visitId, weighingId, weight) {
   }
 
   await visit.save();
-  return visit;
+  return await Visit.findById(visitId).populate(basePopulation);
 }
 
 async function closeVisit(visitId) {
@@ -129,58 +167,19 @@ async function closeVisit(visitId) {
   visit.exitDate = new Date();
   await visit.save();
 
-  return visit;
+  return await Visit.findById(visitId).populate(basePopulation);
 }
 
 async function getOpenVisits() {
-  return await Visit.find({ isClosed: false })
-    .populate({
-      path: 'vehicle',
-      populate: { path: 'vehicleType' },
-    })
-    .populate('driver')
-    .populate('person')
-    .populate({
-      path: 'weighings.material',
-      populate: {
-        path: 'classification',
-        populate: { path: 'materialType' },
-      },
-    });
+  return await Visit.find({ isClosed: false }).populate(basePopulation);
 }
 
 async function getAllVisits() {
-  return await Visit.find()
-    .populate({
-      path: 'vehicle',
-      populate: { path: 'vehicleType' },
-    })
-    .populate('driver')
-    .populate('person')
-    .populate({
-      path: 'weighings.material',
-      populate: {
-        path: 'classification',
-        populate: { path: 'materialType' },
-      },
-    });
+  return await Visit.find().populate(basePopulation);
 }
 
 async function getVisitById(visitId) {
-  return await Visit.findById(visitId)
-    .populate({
-      path: 'vehicle',
-      populate: { path: 'vehicleType' },
-    })
-    .populate('driver')
-    .populate('person')
-    .populate({
-      path: 'weighings.material',
-      populate: {
-        path: 'classification',
-        populate: { path: 'materialType' },
-      },
-    });
+  return await Visit.findById(visitId).populate(basePopulation);
 }
 
 module.exports = {

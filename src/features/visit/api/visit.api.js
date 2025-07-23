@@ -119,19 +119,9 @@ const createVisitSchema = {
     required: ['vehicleId', 'driverId', 'personId', 'operationType'],
   },
   response: {
-    201: {
-      description: 'Visita creada',
-      type: 'object',
-      properties: {
-        _id: { type: 'string' },
-        vehicle: { type: 'string' },
-        driver: { type: 'string' },
-        person: { type: 'string' },
-        operationType: { type: 'string' },
-        entryDate: { type: 'string' },
-        isClosed: { type: 'boolean' },
-        details: { type: 'string' },
-      },
+    200: {
+      type: 'array',
+      items: VisitSchema, // si tenés una definición $ref Visit, o reemplazar por un esquema inline
     },
   },
 };
