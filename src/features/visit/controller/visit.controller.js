@@ -87,8 +87,9 @@ async function visitController(fastify, options) {
     handler: async (request, reply) => {
       try {
         const { visitId } = request.params;
+        const { details } = request.body;
 
-        const closedVisit = await visitService.closeVisit(visitId);
+        const closedVisit = await visitService.closeVisit(visitId, details);
 
         return reply.code(200).send(closedVisit);
       } catch (err) {

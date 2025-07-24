@@ -206,7 +206,7 @@ const closeVisitSchema = {
       },
       'x-company-id': {
         type: 'string',
-        description: 'el id de la compañia',
+        description: 'El ID de la compañía',
       },
     },
     required: ['Authorization', 'x-company-id'],
@@ -218,7 +218,17 @@ const closeVisitSchema = {
     },
     required: ['visitId'],
   },
+  body: {
+    type: 'object',
+    properties: {
+      details: {
+        type: 'string',
+        description: 'Detalles opcionales del cierre de la visita',
+      },
+    },
+  },
 };
+
 const getAllVisitsSchema = {
   description: 'Obtiene todas las visitas registradas',
   tags: ['Visit'],

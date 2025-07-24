@@ -133,6 +133,9 @@ async function completeWeighing(visitId, weighingId, weight) {
   if (weighing.netWeight != null) {
     weighing.isClosed = true;
   }
+  if (details) {
+    visit.details = details;
+  }
 
   await visit.save();
   return await Visit.findById(visitId).populate(basePopulation);
