@@ -41,6 +41,41 @@ async function addWeighing(visitId, { materialId, weight }) {
   const visit = await Visit.findById(visitId);
   if (!visit) throw new Error('Visita no encontrada');
 
+  if (typeof weight !== 'number' || weight <= 0) {
+    throw new Error('Peso inválido, debe ser un número positivo');
+  }
+
+  const lastWeighing = visit.weighings?.[visit.weighings.length - 1];
+
+  if (lastWeighing) {
+    if (
+      lastWeighing.grossWeight === 0 ||
+      lastWeighing.tareWeight === 0 ||
+      lastWeighing.netWeight === 0
+    ) {
+      throw new Error('Ya no se puede registrar peso, el último pesaje fue 0');
+    }
+
+    if (visit.operationType === 'IN') {
+      if (
+        lastWeighing?.tareWeight != null &&
+        weight > lastWeighing.tareWeight
+      ) {
+        throw new Error(
+          'El peso bruto no puede ser mayor a la última tara registrada',
+        );
+      }
+    } else if (visit.operationType === 'OUT') {
+      if (
+        lastWeighing?.grossWeight != null &&
+        weight < lastWeighing.grossWeight
+      ) {
+        throw new Error(
+          'La tara no puede ser menor al último peso bruto registrado',
+        );
+      }
+    }
+  }
   // Validación: visita debe estar abierta
   if (visit.isClosed) {
     throw new Error('No se puede agregar un pesaje a una visita cerrada');
@@ -56,33 +91,6 @@ async function addWeighing(visitId, { materialId, weight }) {
     );
   }
 
-  const lastWeighing = visit.weighings[visit.weighings.length - 1];
-
-  if (
-    lastWeighing.grossWeight === 0 ||
-    lastWeighing.tareWeight === 0 ||
-    lastWeighing.netWeight === 0
-  ) {
-    throw new Error('Ya no se puede registrar peso, el último pesaje fue 0');
-  }
-
-  if (visit.operationType === 'IN') {
-    if (lastWeighing?.tareWeight != null && weight > lastWeighing.tareWeight) {
-      throw new Error(
-        'El peso bruto no puede ser mayor a la última tara registrada',
-      );
-    }
-  } else if (visit.operationType === 'OUT') {
-    if (
-      lastWeighing?.grossWeight != null &&
-      weight < lastWeighing.grossWeight
-    ) {
-      throw new Error(
-        'La tara no puede ser menor al último peso bruto registrado',
-      );
-    }
-  }
-
   visit.weighings.push({
     material: materialId,
     isClosed: false,
@@ -94,7 +102,6 @@ async function addWeighing(visitId, { materialId, weight }) {
   await visit.save();
   return await Visit.findById(visit._id).populate(basePopulation);
 }
-
 async function completeWeighing(visitId, weighingId, weight) {
   if (typeof weight !== 'number' || weight <= 0) {
     throw new Error('Peso inválido, debe ser un número positivo');
@@ -112,36 +119,92 @@ async function completeWeighing(visitId, weighingId, weight) {
 
   if (weighing.isClosed) throw new Error('El pesaje ya está cerrado');
 
-  if (visit.operationType === 'IN') {
+  const isIncome = visit.operationType === 'IN';
+
+  // Determinar qué peso se está ingresando y calcular el potencial peso neto
+  let potentialGrossWeight, potentialTareWeight;
+
+  if (isIncome) {
+    // En operación de entrada, se ingresa la tara
     if (weighing.tareWeight != null) {
       throw new Error('La tara ya fue registrada para este pesaje');
     }
-    weighing.tareWeight = weight;
+    potentialGrossWeight = weighing.grossWeight;
+    potentialTareWeight = weight;
   } else {
+    // En operación de salida, se ingresa el peso bruto
     if (weighing.grossWeight != null) {
       throw new Error('El peso bruto ya fue registrado para este pesaje');
     }
+    potentialGrossWeight = weight;
+    potentialTareWeight = weighing.tareWeight;
+  }
+
+  const lastWeighing = visit.weighings?.[visit.weighings.length - 1];
+
+  if (lastWeighing) {
+    if (
+      lastWeighing.grossWeight === 0 ||
+      lastWeighing.tareWeight === 0 ||
+      lastWeighing.netWeight === 0
+    ) {
+      throw new Error('Ya no se puede registrar peso, el último pesaje fue 0');
+    }
+
+    if (isIncome) {
+      if (
+        lastWeighing?.tareWeight != null &&
+        potentialGrossWeight > lastWeighing.tareWeight
+      ) {
+        throw new Error(
+          'El peso bruto no puede ser mayor a la última tara registrada',
+        );
+      }
+    } else {
+      if (
+        lastWeighing?.grossWeight != null &&
+        potentialTareWeight < lastWeighing.grossWeight
+      ) {
+        throw new Error(
+          'La tara no puede ser menor al último peso bruto registrado',
+        );
+      }
+    }
+  }
+
+  // VALIDACIÓN CRÍTICA: Verificar que el peso neto no sea negativo ANTES de asignar
+  if (potentialGrossWeight != null && potentialTareWeight != null) {
+    const potentialNetWeight = potentialGrossWeight - potentialTareWeight;
+    if (potentialNetWeight < 0) {
+      throw new Error(
+        `El peso neto resultante sería negativo (${potentialNetWeight}). ` +
+          `Peso bruto: ${potentialGrossWeight}, Tara: ${potentialTareWeight}`,
+      );
+    }
+  }
+
+  // Asignar los valores DESPUÉS de todas las validaciones
+  if (isIncome) {
+    weighing.tareWeight = weight;
+  } else {
     weighing.grossWeight = weight;
   }
 
-  // Calculamos neto solo si ya tenemos ambos pesos
+  // Calcular neto si ambos pesos existen
   if (weighing.grossWeight != null && weighing.tareWeight != null) {
     weighing.netWeight = weighing.grossWeight - weighing.tareWeight;
   }
 
-  // Cerramos el pesaje solo si neto ya está calculado (ambos pesos presentes)
+  // Cerrar pesaje si neto ya está calculado
   if (weighing.netWeight != null) {
     weighing.isClosed = true;
-  }
-  if (details) {
-    visit.details = details;
   }
 
   await visit.save();
   return await Visit.findById(visitId).populate(basePopulation);
 }
 
-async function closeVisit(visitId) {
+async function closeVisit(visitId, details) {
   const visit = await Visit.findById(visitId);
   if (!visit) throw new Error('Visita no encontrada');
 
@@ -170,6 +233,9 @@ async function closeVisit(visitId) {
   visit.exitDate = new Date();
   await visit.save();
 
+  if (details) {
+    visit.details = details;
+  }
   return await Visit.findById(visitId).populate(basePopulation);
 }
 

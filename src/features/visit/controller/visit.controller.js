@@ -87,7 +87,12 @@ async function visitController(fastify, options) {
     handler: async (request, reply) => {
       try {
         const { visitId } = request.params;
-        const { details } = request.body;
+
+        // Normaliza `details`: si no viene o es null, se convierte en {}
+        let details = request.body?.details;
+        if (details === null || details === undefined) {
+          details = {};
+        }
 
         const closedVisit = await visitService.closeVisit(visitId, details);
 

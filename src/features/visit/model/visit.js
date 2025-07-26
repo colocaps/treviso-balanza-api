@@ -6,7 +6,7 @@ const weighingSchema = new mongoose.Schema({
     ref: 'Material',
     required: true,
   },
-  grossWeight: { type: Number, required: true },
+  grossWeight: { type: Number },
   tareWeight: { type: Number },
   netWeight: { type: Number },
   isClosed: { type: Boolean, default: false },
