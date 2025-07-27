@@ -31,7 +31,10 @@ const visitSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true, // si querés hacerlo obligatorio
+  },
+  company: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Company', // ✅ Referencia a la empresa
   },
   operationType: { type: String, enum: ['IN', 'OUT'], required: true }, // Entrada o Salida de materiales
 

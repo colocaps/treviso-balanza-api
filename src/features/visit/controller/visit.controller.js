@@ -1,5 +1,6 @@
 // controller/visit-controller.js
 const visitService = require('../service/visit.service');
+const userService = require('../../auth/service/user-service');
 
 const {
   createVisitSchema,
@@ -92,20 +93,35 @@ async function visitController(fastify, options) {
 
         // 🔐 Obtener el usuario desde el token
         const authHeader = request.headers.authorization;
-        const idToken = authHeader?.split(' ')[1];
+        const idToken = authHeader.split(' ')[1];
+
         const decoded = await fastify.firebaseAdmin
           .auth()
           .verifyIdToken(idToken);
+        console.log('UID del token:', decoded.uid);
+
         const user = await userService.getUserByUid(decoded.uid);
+        console.log('Usuario encontrado:', user);
 
         if (!user) {
-          return reply.code(404).send({ error: 'Usuario no encontrado' });
+          const error = new Error('Usuario no encontrado');
+          error.statusCode = 404;
+          throw error;
+        }
+
+        // 🏢 Obtener la compañía desde el header
+        const companyId = request.headers['x-company-id'];
+        if (!companyId) {
+          const error = new Error('Falta el header x-company-id');
+          error.statusCode = 400;
+          throw error;
         }
 
         const closedVisit = await visitService.closeVisit(
           visitId,
           details,
           user._id,
+          companyId, // Nuevo parámetro
         );
 
         return reply.code(200).send(closedVisit);

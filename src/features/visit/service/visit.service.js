@@ -16,7 +16,11 @@ const basePopulation = [
   },
   {
     path: 'user',
-    select: 'name lastname',
+    select: 'name lastname company',
+    populate: {
+      path: 'company',
+      select: 'name', // ajustá los campos que quieras traer de la empresa
+    },
   },
 ];
 
@@ -207,8 +211,7 @@ async function completeWeighing(visitId, weighingId, weight) {
   await visit.save();
   return await Visit.findById(visitId).populate(basePopulation);
 }
-
-async function closeVisit(visitId, details, userId) {
+async function closeVisit(visitId, details, userId, companyId) {
   const visit = await Visit.findById(visitId);
   if (!visit) throw new Error('Visita no encontrada');
 
@@ -237,6 +240,9 @@ async function closeVisit(visitId, details, userId) {
 
   // 🧑 Asociar usuario que cerró la visita
   visit.user = userId;
+
+  // 🏢 Si querés guardar la empresa también en la visita, podrías hacer esto:
+  // visit.company = companyId;
 
   if (details) {
     visit.details = details;
