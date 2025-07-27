@@ -135,11 +135,19 @@ async function visitController(fastify, options) {
   fastify.route({
     url: '/',
     method: 'GET',
-    schema: getAllVisitsSchema,
+    schema: getAllVisitsSchema, // lo actualizamos abajo
     handler: async (request, reply) => {
       try {
-        const visits = await visitService.getAllVisits();
-        return reply.code(200).send(visits);
+        const { page = 1, pageSize = 10, startDate, endDate } = request.query;
+
+        const result = await visitService.getAllVisits({
+          page: parseInt(page),
+          limit: parseInt(pageSize),
+          startDate,
+          endDate,
+        });
+
+        return reply.code(200).send(result);
       } catch (err) {
         request.log.error(err);
         throw err;

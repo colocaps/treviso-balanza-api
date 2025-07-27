@@ -257,8 +257,27 @@ async function getOpenVisits() {
   return await Visit.find({ isClosed: false }).populate(basePopulation);
 }
 
-async function getAllVisits() {
-  return await Visit.find().populate(basePopulation);
+async function getAllVisits({ page = 1, limit = 10, startDate, endDate }) {
+  const skip = (page - 1) * limit;
+  const query = { isClosed: true };
+
+  if (startDate || endDate) {
+    query.entryDate = {};
+    if (startDate) query.entryDate.$gte = new Date(startDate);
+    if (endDate) {
+      // sumo 1 día para que incluya toda la fecha endDate
+      query.entryDate.$lt = new Date(
+        new Date(endDate).getTime() + 24 * 60 * 60 * 1000,
+      );
+    }
+  }
+
+  const [visits, total] = await Promise.all([
+    Visit.find(query).populate(basePopulation).skip(skip).limit(limit),
+    Visit.countDocuments(query),
+  ]);
+
+  return { visits, total };
 }
 
 async function getVisitById(visitId) {

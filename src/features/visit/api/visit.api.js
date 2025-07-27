@@ -88,6 +88,9 @@ const VisitSchema = {
       },
     },
     details: { type: 'string' },
+    totalGrossWeight: { type: 'number' },
+    totalTareWeight: { type: 'number' },
+    totalNetWeight: { type: 'number' },
   },
 };
 
@@ -246,13 +249,38 @@ const getAllVisitsSchema = {
     },
     required: ['Authorization', 'x-company-id'],
   },
+  querystring: {
+    type: 'object',
+    properties: {
+      page: { type: 'integer', minimum: 1, default: 1 },
+      limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
+      startDate: {
+        type: 'string',
+        format: 'date',
+        description: 'Fecha de inicio del rango',
+      },
+      endDate: {
+        type: 'string',
+        format: 'date',
+        description: 'Fecha de fin del rango',
+      },
+    },
+  },
+
   response: {
     200: {
-      type: 'array',
-      items: VisitSchema, // si tenés una definición $ref Visit, o reemplazar por un esquema inline
+      type: 'object',
+      properties: {
+        total: { type: 'integer' },
+        visits: {
+          type: 'array',
+          items: VisitSchema,
+        },
+      },
     },
   },
 };
+
 const getOpenVisitsSchema = {
   description: 'Obtiene todas las visitas que no están cerradas',
   tags: ['Visit'],
