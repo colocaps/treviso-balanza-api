@@ -88,13 +88,25 @@ async function visitController(fastify, options) {
       try {
         const { visitId } = request.params;
 
-        // Normaliza `details`: si no viene o es null, se convierte en {}
-        let details = request.body?.details;
-        if (details === null || details === undefined) {
-          details = {};
+        let details = request.body?.details ?? {};
+
+        // 🔐 Obtener el usuario desde el token
+        const authHeader = request.headers.authorization;
+        const idToken = authHeader?.split(' ')[1];
+        const decoded = await fastify.firebaseAdmin
+          .auth()
+          .verifyIdToken(idToken);
+        const user = await userService.getUserByUid(decoded.uid);
+
+        if (!user) {
+          return reply.code(404).send({ error: 'Usuario no encontrado' });
         }
 
-        const closedVisit = await visitService.closeVisit(visitId, details);
+        const closedVisit = await visitService.closeVisit(
+          visitId,
+          details,
+          user._id,
+        );
 
         return reply.code(200).send(closedVisit);
       } catch (err) {

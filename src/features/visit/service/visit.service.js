@@ -14,6 +14,10 @@ const basePopulation = [
       populate: { path: 'materialType' },
     },
   },
+  {
+    path: 'user',
+    select: 'name lastname',
+  },
 ];
 
 async function createVisit({
@@ -204,7 +208,7 @@ async function completeWeighing(visitId, weighingId, weight) {
   return await Visit.findById(visitId).populate(basePopulation);
 }
 
-async function closeVisit(visitId, details) {
+async function closeVisit(visitId, details, userId) {
   const visit = await Visit.findById(visitId);
   if (!visit) throw new Error('Visita no encontrada');
 
@@ -217,7 +221,6 @@ async function closeVisit(visitId, details) {
     throw new Error('No se puede cerrar la visita: hay pesajes sin finalizar');
   }
 
-  // ✅ Calcular totales generales
   const firstGross =
     visit.weighings.find((w) => w.grossWeight != null)?.grossWeight || 0;
 
@@ -231,11 +234,16 @@ async function closeVisit(visitId, details) {
 
   visit.isClosed = true;
   visit.exitDate = new Date();
-  await visit.save();
+
+  // 🧑 Asociar usuario que cerró la visita
+  visit.user = userId;
 
   if (details) {
     visit.details = details;
   }
+
+  await visit.save();
+
   return await Visit.findById(visitId).populate(basePopulation);
 }
 

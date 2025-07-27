@@ -28,6 +28,11 @@ const visitSchema = new mongoose.Schema({
     ref: 'Person',
     required: true,
   }, // Proveedor o Cliente
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true, // si querés hacerlo obligatorio
+  },
   operationType: { type: String, enum: ['IN', 'OUT'], required: true }, // Entrada o Salida de materiales
 
   weighings: [weighingSchema],
