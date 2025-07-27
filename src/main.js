@@ -27,7 +27,8 @@ async function start() {
     await fastify.register(fastifyCors, {
       origin: '*',
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Métodos HTTP que permites
-      allowedHeaders: 'Content-Type, Authorization', // Encabezados personalizados que permites
+      allowedHeaders:
+        'Content-Type, Authorization, x-admin-token, x-company-id, Accept', // Encabezados personalizados que permites
       // credentials: true, // Si tu cliente necesita enviar cookies o credenciales
     });
 
