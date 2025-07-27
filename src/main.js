@@ -24,6 +24,12 @@ async function start() {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
+    await fastify.register(fastifyCors, {
+      origin: '*',
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Métodos HTTP que permites
+      allowedHeaders: 'Content-Type, Authorization', // Encabezados personalizados que permites
+      // credentials: true, // Si tu cliente necesita enviar cookies o credenciales
+    });
 
     await fastify.register(require('./services/firebase'));
     await fastify.register(require('./middlewares/headers/headers'));
@@ -40,7 +46,7 @@ async function start() {
           version: '1.0.0',
         },
         host: `localhost:${port}`,
-        schemes: ['http'],
+        schemes: ['https'],
         consumes: ['application/json'],
         produces: ['application/json'],
       },
@@ -79,13 +85,6 @@ async function start() {
       // también deberías añadir la IP de tu máquina host y el puerto de Flutter.
       // Ejemplo: 'http://192.168.1.X:XXXX'
     ];
-
-    await fastify.register(fastifyCors, {
-      origin: '*',
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Métodos HTTP que permites
-      allowedHeaders: 'Content-Type, Authorization', // Encabezados personalizados que permites
-      // credentials: true, // Si tu cliente necesita enviar cookies o credenciales
-    });
 
     await fastify.register(require('./features/auth'), {
       prefix: '/auth', // 👈 esto define la ruta base
