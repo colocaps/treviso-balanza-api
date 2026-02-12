@@ -90,12 +90,13 @@ async function userController(fastify, options) {
         } else {
           profile = await Profile.findOne({ name: 'operador' });
         }
-        // Verificar si usuario ya existe
+        // Verificar si usuario ya existe → misma respuesta que registro nuevo, con alreadyRegistered: true
         const existingUser = await userService.getUserByUid(decoded.uid);
         if (existingUser) {
-          return reply.code(409).send({
-            warning: 'Usuario ya registrado',
-            user: existingUser,
+          const userPojo = existingUser.toObject ? existingUser.toObject() : existingUser;
+          return reply.code(200).send({
+            user: userPojo,
+            alreadyRegistered: true,
           });
         }
         // Crear usuario
@@ -109,11 +110,16 @@ async function userController(fastify, options) {
             lastname: request.body.lastname,
             dni: request.body.dni,
             profile: profile._id,
-            companyId: request.companyId, // 👈 asociar al company
+            companyId: request.companyId,
           },
         );
 
-        return reply.code(201).send({ user });
+        const userWithProfile = await userService.getUserById(user._id);
+        const userPojo = userWithProfile.toObject ? userWithProfile.toObject() : userWithProfile;
+        return reply.code(201).send({
+          user: userPojo,
+          alreadyRegistered: false,
+        });
       } catch (err) {
         throw err;
       }

@@ -8,11 +8,14 @@ async function getAllUsers(companyId) {
 }
 
 async function getUserById(id) {
-  return await User.findById(id).populate('profile');
+  return await User.findById(id).populate('profile').populate('company').lean();
 }
 
 async function getUserByUid(uid) {
-  return await User.findOne({ uid }).populate('profile').populate('company'); // 👈 acá está la clave
+  return await User.findOne({ uid })
+    .populate('profile')
+    .populate('company')
+    .lean();
 }
 
 async function getUserByEmail(email) {

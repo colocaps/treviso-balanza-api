@@ -30,25 +30,9 @@ const registerSchemma = {
     },
     required: ['name', 'lastname', 'dni', 'email'],
   },
-  response: {
-    201: {
-      type: 'object',
-      properties: {
-        user: {
-          type: 'object',
-          properties: {
-            uid: { type: 'string' },
-            email: { type: 'string' },
-            name: { type: 'string' },
-            lastname: { type: 'string' },
-            dni: { type: 'string' },
-            profile: { type: 'string' },
-            company: { type: 'string' },
-          },
-        },
-      },
-    },
-  },
+  // Sin response schema: Fastify serializa según el schema y "user: { type: 'object' }" sin properties
+  // devuelve {} y vacía el objeto. Dejamos que la respuesta se envíe tal cual.
+  response: {},
 };
 
 const getUserSchemma = {

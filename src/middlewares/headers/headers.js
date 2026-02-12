@@ -38,7 +38,7 @@ async function verifyAuthPlugin(fastify, opts) {
       request.companyId = companyId;
 
       // Excepción para el registro, no validar user->company
-      if (url.startsWith('/register')) {
+      if (url.includes('/register')) {
         return;
       }
 
