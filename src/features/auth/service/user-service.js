@@ -48,10 +48,22 @@ async function createUserIfNotExists(firebaseUserData, additionalData) {
   return newUser;
 }
 
+async function deleteUser(id) {
+  const user = await User.findById(id);
+  if (!user) {
+    const err = new Error('Usuario no encontrado');
+    err.statusCode = 404;
+    throw err;
+  }
+  await User.findByIdAndDelete(id);
+  return { uid: user.uid, message: 'Usuario eliminado correctamente' };
+}
+
 module.exports = {
   getAllUsers,
   createUserIfNotExists,
   getUserById,
   getUserByUid,
   getUserByEmail,
+  deleteUser,
 };

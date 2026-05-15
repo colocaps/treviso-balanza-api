@@ -10,6 +10,8 @@ const {
   getAllVisitsSchema,
   getOpenVisitsSchema,
   getVisitByIdSchema,
+  deleteVisitSchema,
+  deleteWeighingSchema,
   VisitSchema,
 } = require('../api/visit.api');
 
@@ -181,6 +183,40 @@ async function visitController(fastify, options) {
         if (!visit)
           return reply.code(404).send({ message: 'Visita no encontrada' });
         return reply.code(200).send(visit);
+      } catch (err) {
+        request.log.error(err);
+        throw err;
+      }
+    },
+  });
+
+  // DELETE /visits/:visitId — eliminar visita completa
+  fastify.route({
+    url: '/:visitId',
+    method: 'DELETE',
+    schema: deleteVisitSchema,
+    handler: async (request, reply) => {
+      try {
+        const { visitId } = request.params;
+        const result = await visitService.deleteVisit(visitId);
+        return reply.code(200).send(result);
+      } catch (err) {
+        request.log.error(err);
+        throw err;
+      }
+    },
+  });
+
+  // DELETE /visits/:visitId/weighings/:weighingId — eliminar un sub-pesaje
+  fastify.route({
+    url: '/:visitId/weighings/:weighingId',
+    method: 'DELETE',
+    schema: deleteWeighingSchema,
+    handler: async (request, reply) => {
+      try {
+        const { visitId, weighingId } = request.params;
+        const updatedVisit = await visitService.deleteWeighing(visitId, weighingId);
+        return reply.code(200).send(updatedVisit);
       } catch (err) {
         request.log.error(err);
         throw err;

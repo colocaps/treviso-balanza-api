@@ -126,6 +126,41 @@ async function userController(fastify, options) {
     },
   });
 
+  // DELETE /auth/user/:id — eliminar usuario (solo admin)
+  fastify.route({
+    method: 'DELETE',
+    url: '/user/:id',
+    handler: async (request, reply) => {
+      try {
+        const authHeader = request.headers.authorization;
+        const idToken = authHeader.split(' ')[1];
+        const decoded = await fastify.firebaseAdmin.auth().verifyIdToken(idToken);
+
+        const User = require('../model/user');
+        const requestingUser = await User.findOne({ uid: decoded.uid }).populate('profile');
+        if (!requestingUser || requestingUser.profile.name !== 'admin') {
+          return reply.code(403).send({ error: 'No autorizado: se requiere perfil admin' });
+        }
+
+        const { id } = request.params;
+        const result = await userService.deleteUser(id);
+
+        // También eliminar de Firebase Auth para que no pueda volver a iniciar sesión
+        try {
+          await fastify.firebaseAdmin.auth().deleteUser(result.uid);
+        } catch (firebaseErr) {
+          // Si no existe en Firebase (ej: usuario de prueba), no es un error crítico
+          request.log.warn('No se pudo eliminar el usuario de Firebase:', firebaseErr.message);
+        }
+
+        return reply.code(200).send({ message: result.message });
+      } catch (err) {
+        request.log.error(err);
+        throw err;
+      }
+    },
+  });
+
   fastify.route({
     method: 'PUT',
     url: '/user/:id',

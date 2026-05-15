@@ -284,6 +284,51 @@ async function getVisitById(visitId) {
   return await Visit.findById(visitId).populate(basePopulation);
 }
 
+async function deleteVisit(visitId) {
+  const visit = await Visit.findById(visitId);
+  if (!visit) {
+    const err = new Error('Visita no encontrada');
+    err.statusCode = 404;
+    throw err;
+  }
+  await Visit.findByIdAndDelete(visitId);
+  return { message: 'Visita eliminada correctamente' };
+}
+
+async function deleteWeighing(visitId, weighingId) {
+  const visit = await Visit.findById(visitId);
+  if (!visit) {
+    const err = new Error('Visita no encontrada');
+    err.statusCode = 404;
+    throw err;
+  }
+
+  if (visit.isClosed) {
+    const err = new Error('No se puede modificar una visita cerrada');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const weighingIndex = visit.weighings.findIndex(
+    (w) => w._id.toString() === weighingId,
+  );
+  if (weighingIndex === -1) {
+    const err = new Error('Pesaje no encontrado');
+    err.statusCode = 404;
+    throw err;
+  }
+
+  if (weighingIndex === 0) {
+    const err = new Error('No se puede eliminar el pesaje principal de la visita');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  visit.weighings.splice(weighingIndex, 1);
+  await visit.save();
+  return await Visit.findById(visitId).populate(basePopulation);
+}
+
 module.exports = {
   createVisit,
   addWeighing,
@@ -292,4 +337,6 @@ module.exports = {
   getOpenVisits,
   getAllVisits,
   getVisitById,
+  deleteVisit,
+  deleteWeighing,
 };

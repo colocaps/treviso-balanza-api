@@ -340,6 +340,59 @@ const getVisitByIdSchema = {
   },
 };
 
+const deleteVisitSchema = {
+  description: 'Elimina una visita por ID',
+  tags: ['Visit'],
+  headers: {
+    type: 'object',
+    properties: {
+      Authorization: { type: 'string' },
+      'x-company-id': { type: 'string' },
+    },
+    required: ['Authorization', 'x-company-id'],
+  },
+  params: {
+    type: 'object',
+    properties: {
+      visitId: { type: 'string' },
+    },
+    required: ['visitId'],
+  },
+  response: {
+    200: {
+      type: 'object',
+      properties: {
+        message: { type: 'string' },
+      },
+    },
+    404: {
+      type: 'object',
+      properties: { message: { type: 'string' } },
+    },
+  },
+};
+
+const deleteWeighingSchema = {
+  description: 'Elimina un sub-pesaje de una visita abierta',
+  tags: ['Visit'],
+  headers: {
+    type: 'object',
+    properties: {
+      Authorization: { type: 'string' },
+      'x-company-id': { type: 'string' },
+    },
+    required: ['Authorization', 'x-company-id'],
+  },
+  params: {
+    type: 'object',
+    properties: {
+      visitId: { type: 'string' },
+      weighingId: { type: 'string' },
+    },
+    required: ['visitId', 'weighingId'],
+  },
+};
+
 module.exports = {
   createVisitSchema,
   addWeighingSchema,
@@ -348,5 +401,7 @@ module.exports = {
   getAllVisitsSchema,
   getOpenVisitsSchema,
   getVisitByIdSchema,
+  deleteVisitSchema,
+  deleteWeighingSchema,
   VisitSchema,
 };
