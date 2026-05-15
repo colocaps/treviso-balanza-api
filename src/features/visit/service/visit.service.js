@@ -224,16 +224,12 @@ async function closeVisit(visitId, details, userId, companyId) {
     throw new Error('No se puede cerrar la visita: hay pesajes sin finalizar');
   }
 
-  const firstGross =
-    visit.weighings.find((w) => w.grossWeight != null)?.grossWeight || 0;
-
-  const lastTare =
-    [...visit.weighings].reverse().find((w) => w.tareWeight != null)
-      ?.tareWeight || 0;
-
-  visit.totalGrossWeight = firstGross;
-  visit.totalTareWeight = lastTare;
-  visit.totalNetWeight = firstGross - lastTare;
+  // The main (first) weighing's gross/tare/net represent the real truck weight.
+  // Sub-weighings only subdivide the net — they don't change the total weight.
+  const mainWeighing = visit.weighings[0];
+  visit.totalGrossWeight = mainWeighing?.grossWeight || 0;
+  visit.totalTareWeight = mainWeighing?.tareWeight || 0;
+  visit.totalNetWeight  = mainWeighing?.netWeight  || 0;
 
   visit.isClosed = true;
   visit.exitDate = new Date();
