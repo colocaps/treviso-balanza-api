@@ -13,6 +13,7 @@ const weighingSchema = new mongoose.Schema({
 });
 
 const visitSchema = new mongoose.Schema({
+  visitNumber: { type: Number }, // sequential human-readable visit number
   vehicle: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Vehicle',

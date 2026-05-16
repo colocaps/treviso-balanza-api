@@ -31,6 +31,12 @@ async function createVisit({
   operationType,
   details,
 }) {
+  // Auto-increment: find the highest visitNumber and add 1.
+  const last = await Visit.findOne({}, { visitNumber: 1 })
+    .sort({ visitNumber: -1 })
+    .lean();
+  const visitNumber = (last?.visitNumber ?? 0) + 1;
+
   const visit = await Visit.create({
     vehicle: vehicleId,
     driver: driverId,
@@ -40,6 +46,7 @@ async function createVisit({
     isClosed: false,
     weighings: [],
     details,
+    visitNumber,
   });
 
   return await Visit.findById(visit._id).populate(basePopulation);
