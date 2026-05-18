@@ -35,9 +35,22 @@ async function updatePersonById(id, data) {
   return updated;
 }
 
+async function deletePersonById(id) {
+  const deleted = await Person.findByIdAndDelete(id);
+
+  if (!deleted) {
+    const error = new Error('Persona no encontrada');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  return deleted;
+}
+
 module.exports = {
   getAllPersons,
   createPersonIfNotExists,
   getPersonById,
   updatePersonById,
+  deletePersonById,
 };

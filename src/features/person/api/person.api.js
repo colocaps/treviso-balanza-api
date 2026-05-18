@@ -170,9 +170,55 @@ const getPersonByIdSchema = {
   },
 };
 
+const deletePersonSchema = {
+  tags: ['Person'],
+  headers: {
+    type: 'object',
+    properties: {
+      Authorization: {
+        type: 'string',
+        description: 'Token JWT Bearer de Firebase',
+      },
+    },
+    required: ['Authorization'],
+  },
+  description: 'Eliminar una persona por ID',
+  params: {
+    type: 'object',
+    properties: {
+      id: { type: 'string' },
+    },
+    required: ['id'],
+  },
+  response: {
+    200: {
+      description: 'Persona eliminada',
+      type: 'object',
+      properties: {
+        _id: { type: 'string' },
+        name: { type: 'string' },
+        cuit: { type: 'string' },
+        phoneNumber: { type: 'string' },
+        personTypes: {
+          type: 'array',
+          items: { type: 'string' },
+        },
+      },
+    },
+    404: {
+      description: 'Persona no encontrada',
+      type: 'object',
+      properties: {
+        error: { type: 'string' },
+      },
+    },
+  },
+};
+
 module.exports = {
   registerPersonSchemma,
   updatePersonSchema,
   getAllPersonsSchema,
   getPersonByIdSchema,
+  deletePersonSchema,
 };

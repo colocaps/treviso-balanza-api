@@ -3,12 +3,14 @@ const {
   updatePersonById,
   getAllPersons,
   getPersonById,
+  deletePersonById,
 } = require('../service/person.service');
 const {
   registerPersonSchemma,
   updatePersonSchema,
   getAllPersonsSchema,
   getPersonByIdSchema,
+  deletePersonSchema,
 } = require('../api/person.api');
 
 const { validatePersonTypes } = require('../model/person-model');
@@ -77,6 +79,22 @@ async function personController(fastify, options) {
         return reply.code(200).send(person);
       } catch (e) {
         throw e;
+      }
+    },
+  });
+
+  fastify.route({
+    method: 'DELETE',
+    url: '/:id',
+    schema: deletePersonSchema,
+    handler: async (request, reply) => {
+      const { id } = request.params;
+      try {
+        const deleted = await deletePersonById(id);
+        return reply.code(200).send(deleted);
+      } catch (err) {
+        const status = err.statusCode || 500;
+        return reply.code(status).send({ error: err.message });
       }
     },
   });
