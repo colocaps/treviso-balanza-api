@@ -72,7 +72,12 @@ async function addWeighing(visitId, { materialId, weight }) {
     }
 
     if (visit.operationType === 'IN') {
+      // Ordering constraint only applies before the first closing (main weighing).
+      // Sub-weighings (added after the main weighing is closed) are exempt so
+      // they can carry any positive gross regardless of the main tare value.
+      const hasClosedWeighing = visit.weighings.some((w) => w.isClosed);
       if (
+        !hasClosedWeighing &&
         lastWeighing?.tareWeight != null &&
         weight > lastWeighing.tareWeight
       ) {
