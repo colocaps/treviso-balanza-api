@@ -303,6 +303,26 @@ async function deleteVisit(visitId) {
   return { message: 'Visita eliminada correctamente' };
 }
 
+async function updateVisitDate(visitId, entryDate) {
+  const visit = await Visit.findById(visitId);
+  if (!visit) {
+    const err = new Error('Visita no encontrada');
+    err.statusCode = 404;
+    throw err;
+  }
+
+  const date = new Date(entryDate);
+  if (isNaN(date.getTime())) {
+    const err = new Error('Fecha inválida');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  visit.entryDate = date;
+  await visit.save();
+  return await Visit.findById(visitId).populate(basePopulation);
+}
+
 async function deleteWeighing(visitId, weighingId) {
   const visit = await Visit.findById(visitId);
   if (!visit) {
@@ -347,4 +367,5 @@ module.exports = {
   getVisitById,
   deleteVisit,
   deleteWeighing,
+  updateVisitDate,
 };

@@ -190,6 +190,26 @@ async function visitController(fastify, options) {
     },
   });
 
+  // PATCH /visits/:visitId/date — actualizar fecha de entrada
+  fastify.route({
+    url: '/:visitId/date',
+    method: 'PATCH',
+    handler: async (request, reply) => {
+      try {
+        const { visitId } = request.params;
+        const { entryDate } = request.body;
+        if (!entryDate) {
+          return reply.code(400).send({ message: 'Falta el campo entryDate' });
+        }
+        const updatedVisit = await visitService.updateVisitDate(visitId, entryDate);
+        return reply.code(200).send(updatedVisit);
+      } catch (err) {
+        request.log.error(err);
+        throw err;
+      }
+    },
+  });
+
   // DELETE /visits/:visitId — eliminar visita completa
   fastify.route({
     url: '/:visitId',
